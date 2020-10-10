@@ -1,0 +1,124 @@
+#!/bin/bash
+
+# Descripción del Script: Dado un Directorio como argumento (en caso de no haber argumento se toma directorio actual pwd), busca en el Directorio los dos Directorio/Fichero/Enlace Simbólico de más tamaño y muestra su información de nombre y tamaño. En caso de que el directorio donde se realiza la búsqueda esté vacío se devolverá una salida indicándolo. En caso de sólo haber un Archivo de devolverá la info de ese Directorio/Fichero/Enlace Simbólico. En caso de sólo haber dos Archivos, mostraremos por pantalla la info de esos dos Archivos. En caso de haber más de dos Archivos en el Directorio deberemos seleccionar los dos de mayor tamaño y mostrar sus info por pantalla. También se puede dar el caso de que todos los Archivos con tamaños igual a cero dentro del Directorio, en este caso deberemos listar dos cuales quiera.
+
+#NOTA: Tres tipos de Archivos: Archivos de tipo Directorio, Archivos de tipo Fichero y #Archivos de tipo Enlace Simbólico
+
+#		Argumentos que debe recibir: Uno o ningún Directorio
+
+#		Salida: Devuelve por pantalla información de nombre y tamaños ficheros
+
+
+# Control de Argumentos de Entrada
+if test $# -eq 0	# No hay Argumentos
+then
+	directorio=$PWD
+
+fi
+
+if test $# -eq 1	# Hay 1 Argumento
+then
+	#Comprobamos que el Directorio introducido como argumento existe; si no existe
+ 	#devolvemos error
+	if ! test -e $1
+	then
+		echo "Error: El directorio $1 no existe"
+		exit 2
+	fi
+
+	#Comprobamos que el Directorio introducido como argumento es de Tippo Directorio
+	#si no lo es devolvemos error
+	if ! test -d $1
+	then
+		echo "Error: El argumento introducido $1 no es un Directorio "
+		exit 3
+	fi
+	#Si llegamos hasta aquí todo ha ido bien y el argumento de entrada es donde 
+	#realizaremos la búsqueda
+	directorio=$1
+
+fi
+
+if test $# -gt 1	# Hay 2 o más Argumentos
+then
+	echo "Error: se han introducido 2 o más argumentos"
+	exit 1
+fi
+# FIN Control de Argumentos de Entrada
+
+# Empieza la funcionalidad del Script
+
+#CASO 1): Dos o más Archivos (todos vacíos sin modificación previa) dentro del Directorio que pasamos como argumento. Mostramos el Archivo con el tamaño distinto de cero y cualquier otro de los Archivos. El motivo de tomar las 4 primeras lineas con ele mandato 'head' es que cuando mostramos la información de un Directorio mediante el uso del mandato 'du', este nos lista también la información del propio Directorio así cómo la información de un fichero oculto asociado al Directorio, obviamente esa información no nos resulta relevante en este caso, por lo que deberemos deshacernos de ella. Hay que tener en cuanta que el tamaño de los Archivos de los cuales nos queremos deshacer estaño asociados al Directorio en el cuál estamos realizando la búsqueda y el tamaño de dichos Archivos siempre serán los mayores que encontraremos al ejecutar el mandato 'du' ya que todos los demás Archivos listados mediante 'du' están contenidos en el Directorio. De esta forma nos quedamos con los 4 Archivos de mayor tamaño que nos ha devuelto 'du' (previamente ordenados usando el mandato 'sort' de mayor a menor). Por último, de estás cuatro líneas nos quedamos sólo con las dos últimas líneas utilizando mandato 'tail' y así desechar las dos primeras líneas.
+
+#du -a $directorio|head -2
+
+#CASO 1): Dos o más Archivos (todos vacíos con modificación previa) dentro del Directorio que pasamos como argumento. (Aparece un nuevo fichero oculto del mismo tamaño que el Directorio donde estamos buscando)
+
+#du -a $directorio|sort -nr|head -4|tail -2
+
+#CASO 2) Un Archivo vacío (nunca modificado) dentro del Directorio. En este caso el #mandato 'du' devuelve dos salidas; la del Directorio y la del Archivo vacío ambas a cero. #Sólo deseemos mostrar la salida del Archivo. 
+
+#du -a $directorio|head -1
+
+
+
+
+
+var1=0
+#El siguiente bloque es muy delicado y deja de funcionar en cuanto creo algo en el directorio y luego lo borro, en la práctica el Directorio debería estar vacío, pero se crean ficheros ocultos que hacen que en realidad no este vacío.
+
+for archivo in `du -a $directorio|sort -nr|head -3|tail -2`
+do
+	if test $var1 -eq 0
+	then
+		
+		var2=$archivo
+		
+
+	else
+		var2="${var2} $archivo"
+	fi
+	var1=$(($var1 + 1))
+done
+if test $var1 -eq 2
+then
+	echo "Nada que mostrar: El directorio $i esta vacío"
+	exit 0
+fi
+
+var1=0
+for archivo in `du -a $directorio|sort -nr|head -3|tail -2`
+do
+	if test $var1 -eq 0
+	then
+		
+		var2=$archivo
+		
+
+	else
+		let resto=$var1%2
+		if test $resto -eq 0
+		then
+			
+			#var1 es par; 2, 4, 6,...
+			var2=$archivo
+			
+		else
+			#var1 es impar; 1, 3, 5,...
+			var2="${var2} $archivo"
+			echo $var2
+			
+
+		fi
+
+
+	fi
+	var1=$(($var1 + 1))
+	
+	
+
+done
+
+
+# FIN Script
+exit 0
