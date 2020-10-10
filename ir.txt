@@ -27,13 +27,8 @@ fi
 git init
 git add .
 git commit -m "first commit"
-git remote add origin $1 &> STD_OUT
-if test $? -ne 0
-then
-	echo "Error: la url del repositorio en remoto no es válida"
-	exit 3
-fi
-git push -u origin master &> STD_OUT
+git remote add origin $1
+git push -u origin master
 
 # FIN Script
 exit 0
