@@ -1,0 +1,50 @@
+#!/bin/bash
+
+#Ejercicio2: 
+
+#Controlar Argumentos
+
+err=F
+if test $# -gt 1
+then
+	echo "Error: Hemos pasado más argumentos de los que acepta este Script"
+	exit 1
+fi
+if test $# -eq 0
+then
+	directorio=$PWD  #Si no hay argumentos de entrada tomo el directorio actual
+
+else
+	#compruebo que el directorio que nos han pasado como argumento existe
+	if test -e $0
+	then
+		directorio=$0
+	else
+		echo "Error: el argumento $0 no existe"
+		exit 2
+	fi
+
+	#comprobar que el argumento que hemos pasado es un Directorio y no es un fichero
+
+	if ! test -d $directorio
+	then
+		echo "Error: el argumento $0 no es un directorio"
+		exit 3
+
+	fi
+
+fi
+
+echo "El Directorio en el cuál cambiaremos todos los permisos será: $directorio"		
+
+
+
+#Aquí llego si todo ha ido bien, en caso de haber algún problema con el argumento de entrada, el script devuelve un error con código distinto de 0.
+
+for FILE in `find $directorio -name "*.sh"` # Recordar que el mandato find tiene un comportamiento recursivo
+do
+	#echo "El valor de la variable FILE es: $FILE"
+	
+	chmod 777 $FILE
+done
+exit 0

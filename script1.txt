@@ -1,0 +1,48 @@
+#!/bin/bash
+
+#Ejercicio1: Obtenemos los mandatos de los cuales queremos saber si tienen página del manual en /bin. Por otro lado los mandatos que si tienen página de manual aparecen en el Directorio /usr/share/man/man1. Listamos el contenido de /bin y uno por uno vamos comprobando si dicho mandato tiene una página de manual mirando el Directorio /urs/share/man/man1. El Script sólo devolverá una lista con los mandatos que NO aparecen en el Directorio /bin que SI tienen una página del manual. Notar que si todos los mandatos que aparecen en el Directorio /bin SI tienen una página en el manual, entonces notar que el Script no devolverá nada, entonces en ese caso podemos confundir la salida, es aconsejable poner un mensaje específico cuando todos los mandatos SI tienen una página del manual.
+
+#Controlar Argumentos
+
+if test $# -ne 0
+then
+	echo "Error. Uso: $0"
+	exit 1
+fi
+
+#Fin control Argumentos
+
+#Revisar el código
+
+cuentaEncontrados=0
+cuentaNoEncontrados=0
+
+for i in `ls /bin`
+do
+	for j in `ls /usr/share/man/man1`
+	do
+		# echo -n "¿ $i.1 = $j ?"
+		
+		if  test "$i.1" = $j
+		then
+			# echo " ---> SI"
+			cuentaEncontrados=$(($cuentaEncontrados + 1))
+		# else
+			# echo " ---> NO"
+		fi
+	done
+
+	if test $cuentaEncontrados -eq 0
+	then
+		echo "El mandato $i no tiene página de manual"
+		cuentaNoEncontrados=$(($cuentaNoEncontrados + 1))
+		cuentaEncontrados=0			
+	fi
+
+done
+if test $cuentaNoEncontrados -eq 0
+then
+	echo "Todos los mandatos del Directorio /bin tienen página de manual"
+fi
+
+	
