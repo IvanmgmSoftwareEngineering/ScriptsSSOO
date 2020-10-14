@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# Descripción del Script
+
+#		Argumentos que debe recibir: 
+
+#		Salida: 
+
+
+# Control de Argumentos de Entrada
+if test $# -eq 0	# No hay Argumentos
+then
+
+
+fi
+
+if test $# -eq 1	# Hay 1 Argumento
+then
+
+
+fi
+
+if test $# -gt 1	# Hay 2 o más Argumentos
+then
+
+
+fi
+# FIN Control de Argumentos de Entrada
+
+# Empieza la funcionalidad del Script
+
+
+
+
+# FIN Script
+exit 0

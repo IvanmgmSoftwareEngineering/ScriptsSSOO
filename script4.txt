@@ -2,7 +2,7 @@
 
 # Descripción del Script
 
-#		Argumentos que debe recibir: Un argumento de tipo Fichero
+#		Argumentos que debe recibir: Nombre de un Fichero. Un argumento de tipo String
 
 #		Salida: Devuelve por pantalla la ruta/s donde está/n alojado/s el/los Fichero/s especificado en #el argumento de entrada
 
@@ -17,20 +17,7 @@ fi
 
 if test $# -eq 1	# Hay 1 Argumento
 then
-	# Comprueba si el Fichero que pasamos como argumento de entrada existe; si no existe devolvemos error
-	if ! test -e $1
-	then
-		echo "Error: El fichero con nombre $1 no existe"
-		exit 2
-	fi
-	# Comprueba si el Fichero que pasamos como Argumento de entrada es de Tipo Fichero; si no es de tipo 	
-	# Fichero devuelve error
-	if ! test -f $1
-	then
-		echo "Error: el argumento de entrada no es un fichero"
-		exit 3
-	fi
-
+	directorio=$1
 fi
 
 if test $# -gt 1	# Hay 2 o más Argumentos
@@ -43,27 +30,41 @@ fi
 # Empieza la funcionalidad del Script
 
 # PASO 1: Creamos un Fichero temporal que contenga en contenido de la variable PATH
-	echo $PATH > aux1.txt
+	
+	#echo $PATH > aux1.txt
+	var1=$PATH
 
 # PASO 2: Sabemos que las rutas en la variable PATH están separadas por el carácter ':'. Utilizamos el mandato #'tr' para sustituir el carácter ':' por un espacio y almacenamos el resultado en otro fichero temporal aux2.txt #el fichero #temporal aux.txt
-	tr ':' ' ' < aux1.txt 1> aux2.txt
+	
+	#tr ':' ' ' < aux1.txt 1> aux2.txt
+	rutasPATH=`echo $var1|tr ':' ' '`
 
 # PASO 3: Almacenamos el contenido del fichero aux2.txt en una variable 
-	rutasPATH=`cat aux2.txt`
+	#rutasPATH=`cat aux2.txt`
 	
 
-# PASO 4: Una vez que tenemos todas las rutas almacenadas en la variable PATH, las visitamos de forma recursiva #(profundizando en todos sus subdirectorios) una por una y en orden cada una de ellas. #En caso de encontrar una #coincidencia NO detenemos la búsqueda e imprimimos por pantalla la ruta del Directorio donde se ha encontrado la #coincidencia.
+# PASO 4: Una vez que tenemos todas las rutas almacenadas en la variable PATH, las #visitamos de forma recursiva #(profundizando en todos sus subdirectorios) una por una y #en orden cada una de ellas. #En caso de encontrar una #coincidencia NO detenemos la #búsqueda e imprimimos por pantalla la ruta del Directorio donde se ha encontrado la #coincidencia.
 	contador=0
-	echo "Estamos buscando $1"
-	echo "PATH=$rutasPATH"
+	#echo "PATH=$rutasPATH"
+	#echo "Estamos buscando $1"
 	for ruta in $rutasPATH
 	do
-		echo $ruta
-		for j in `find $ruta -name "$1"`
+		#echo "Estamos buscando en $ruta"
+		for j in `find $ruta -name "$1" 2> err.txt`
 		do
 			contador=$(($contador +	1))
 			echo "Coincidencia $contador: $j"
+			
+			
 		done
 	done
+	
+	rm err.txt
+	
+	if test $contador -eq 0
+	then
+		echo "No se ha encontrado el Archivo $1 en ninguna de las rutas almacenadas en la variable PATH"
+	fi
+	
 # FIN Script
 exit 0

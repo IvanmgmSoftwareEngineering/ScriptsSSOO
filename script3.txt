@@ -45,9 +45,9 @@ fi
 
 # Empieza la funcionalidad del Script
 
-for i in `find $directorio -name "*[ab]*" -and \! -name "*~*"`      
+for i in `find $directorio -name "[ab]*" -and \! -name "*~*"`
 do
-	echo $i
+	echo $i	
 done
 
 # FIN Script
