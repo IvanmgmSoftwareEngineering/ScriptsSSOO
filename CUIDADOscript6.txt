@@ -1,0 +1,140 @@
+#!/bin/bash
+
+# Descripción del Script
+
+#		Argumentos que debe recibir: 
+
+#		Salida: 
+
+
+# Control de Argumentos de Entrada
+if test $# -eq 0	# No hay Argumentos
+then
+	echo "Error: no se ha pasado ningún parámetro"
+	exit 1
+fi
+
+if test $# -eq 1	# Hay 1 Argumento
+then
+	if ! test -e $1
+	then
+		echo "Error: El Archivo $1 no existe"
+		exit 2
+	fi
+
+	if ! test -f $1
+	then
+		echo "Error: El Archivo $1 no es un Fichero"
+		exit 3
+	fi
+	echo $1
+	if ! [[ $1 == *.tgz ]]
+	then
+		echo "Error: el Archivo $1 pasado como argumento no tiene la extensión .tgz"
+		exit 4
+	fi
+	
+
+fi
+
+if test $# -gt 1	# Hay 2 o más Argumentos
+then
+	echo "Error: se han pasado dos o más Argumentos de entrada"
+	exit 5
+
+fi
+
+directorio=$PWD
+# FIN Control de Argumentos de Entrada
+
+# Empieza la funcionalidad del Script
+
+#Creamos un directorio temporal con Nombre Único en el Directorio Actual de trabajo. #Almacenamos el nombre del Directorio temporal creado en la variable temp.
+
+temp=`mktemp -d temp.XXXXXX`
+
+#Cambiamos el contenido de la Variable directorio para que contenga la ruta al Directorio #temporal que hemos creado en el paso anterior.
+
+directorio="${directorio}/$temp"
+
+#Realizamos una copia del Archivo Comprimido con extensión .tgz en el Directorio Temporal #creado antes.
+
+cp $1 $directorio
+
+#Cambio el Directorio Actual de trabajo al Directorio de la carpeta temporal
+
+PWD=$directorio
+
+#Guardo en una variable el nombre de la copia del Archivo Comprimido
+
+nomCopia=`ls`
+
+#Descomprimimos el Archivo comprimido dentro del Directorio Temporal
+
+tar xvzf "$directorio/$nomCopia"
+
+#Borro la copia del Archivo Comprimido
+
+rm ./$nomCopia
+
+#Borro todos los Archivos Descomprimidos con un tamaña superior a 8Kbytes
+#for i in `ls $directorio`
+do
+	borra=False
+	for j in i
+	do
+		if test borra = "True"
+		then
+			rm $j
+		fi
+		if test $j -gt 8 && borra == "False"
+		then
+			borra=True
+		fi
+	done
+	
+done
+
+#Comprimo los Archivos que hayan sobrevivido, suponiendo que haya sobrevivido alguno
+
+if test -z `ls`
+then
+#No hay ningún Archivo con tamaño menor o igual a 8Kbytes
+	echo "No hay ningún Archivo con tamaño inferior o igual a 8Kbytes, dentro del Archivo Comprimido $1"
+
+else
+#Hay como mínimo un Archivo con tamaño menor o igual a 8Kbytes
+
+#Comprimo
+
+#Almaceno el nombre de todos los Archivos que quiero Comprimir en una variable
+	variable=""
+	for i in `ls`
+	do
+		variable="${variable} i"
+	done
+
+	tar xvzf ./Limpio$nomCopia  $variable
+
+	
+fi
+
+#Realizo copia del Nuevo Archivo Comprimo Limpio en el Directorio donde está alojado el Archivo Comprimido que recibimos como Argumento
+
+cp ./Limpio$nomCopia $1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# FIN Script
+exit 0
