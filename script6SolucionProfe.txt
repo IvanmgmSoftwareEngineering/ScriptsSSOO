@@ -10,39 +10,45 @@
 # Control de Argumentos de Entrada
 if test $# -eq 0	# No hay Argumentos
 then
-	dir=$PWD
-
+	echo "Error: no se ha pasado ningún Argumento de entrada"
+	exit 1
 
 fi
 
 if test $# -eq 1	# Hay 1 Argumento
 then
-	if test -e $1
+	if ! test -e $1
 	then
-		echo "Error: El Archivo $1 no existe"
-		exit 1
-	fi
-
-	if test -d $1
-	then
-		echo "Error: el Archivo $1 no es de tipo Directorio"
+		echo "Error: el Archivo $1 no existe"
 		exit 2
 	fi
 
-	dir=$1
+	if ! test -f $1
+	then
+		echo "Error: el Archivo $1 no es un Fichero"
+		exit 3
+	fi
+
+	if ! test [ $1 = ".tgz"]
+	then
+		echo "Error: el Archivo recibido como Argumento no tiene la extensión .tgz"
+		exit 4
+
+
 fi
 
 if test $# -gt 1	# Hay 2 o más Argumentos
 then
-	echo "Error: se han pasado 2 Argumentos o más"
-	exit 3
+	echo "Error. se han pasado más de 2 Argumentos"
+	exit 5
+
+
 fi
 # FIN Control de Argumentos de Entrada
 
 # Empieza la funcionalidad del Script
 
-	#archivos=`ls -S|xargs du -a|head -2`
-	archivos=`du -a $dir|sort -nr|head -3|tail -2`
+
 
 
 
